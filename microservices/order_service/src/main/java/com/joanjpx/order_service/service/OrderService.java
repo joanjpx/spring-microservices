@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.joanjpx.order_service.model.dtos.BaseResponse;
 import com.joanjpx.order_service.model.dtos.OrderItemRequest;
 import com.joanjpx.order_service.model.dtos.OrderRequest;
 import com.joanjpx.order_service.model.entities.Order;
@@ -22,25 +23,33 @@ public class OrderService {
     public void placeOrder(OrderRequest orderRequest) {
 
         // TO-DO check inventory
-        this.webClient.build()
+        BaseResponse result = this.webClient.build()
             .post()
-            .uri("http://inventory-service/api/inventory")
+            .uri("http://localhost:8081/api/inventory")
             .bodyValue(orderRequest.getOrderItems())
             .retrieve()
             .bodyToMono(BaseResponse.class)
             .block();
 
-        Order order = new Order();
-        order.setOrderNumber(UUID.randomUUID().toString());
-        order.setOrderItems(
-                orderRequest
-                    .getOrderItems()
-                    .stream()
-                    .map(orderItemRequest -> mapOrderItemRequestToOrderItem (orderItemRequest, order))
-                    .toList()
-        );
+        if (result!=null && !result.hasErrors()) {
 
-        orderRepository.save(order);
+            System.out.println("Inventory checked out successfully");
+            Order order = new Order();
+            order.setOrderNumber(UUID.randomUUID().toString());
+            order.setOrderItems(
+                    orderRequest
+                        .getOrderItems()
+                        .stream()
+                        .map(orderItemRequest -> mapOrderItemRequestToOrderItem (orderItemRequest, order))
+                        .toList()
+            );
+    
+            orderRepository.save(order);
+        }else{
+
+            throw new IllegalArgumentException("Some of the products are out of stock");
+        }
+
 
     }
 

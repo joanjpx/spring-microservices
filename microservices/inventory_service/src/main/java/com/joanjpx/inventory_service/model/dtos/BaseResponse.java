@@ -1,4 +1,4 @@
-package com.joanjpx.order_service.model.dtos;
+package com.joanjpx.inventory_service.model.dtos;
 
 public record BaseResponse(String[] errorMessages) {
 
