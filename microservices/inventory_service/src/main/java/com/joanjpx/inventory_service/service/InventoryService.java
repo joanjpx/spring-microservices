@@ -2,6 +2,7 @@ package com.joanjpx.inventory_service.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,7 @@ public class InventoryService {
 
         orderItems.forEach(orderItemRequest -> {
 
-            var inventory = inventoryList
+            Optional<Inventory> inventory = inventoryList
                 .stream()
                 .filter(i -> i.getSku().equals(orderItemRequest.getSku()))
                 .findFirst();
@@ -44,6 +45,9 @@ public class InventoryService {
                 errorList.add(orderItemRequest.getSku());
             }
         });
+
+
+        return errorList.size() > 0 ? new BaseResponse(errorList.toArray(new String[0])) : new BaseResponse(null);
 
     }
 }
