@@ -8,7 +8,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.joanjpx.order_service.model.dtos.BaseResponse;
 import com.joanjpx.order_service.model.dtos.OrderItemRequest;
+import com.joanjpx.order_service.model.dtos.OrderItemResponse;
 import com.joanjpx.order_service.model.dtos.OrderRequest;
+import com.joanjpx.order_service.model.dtos.OrderResponse;
 import com.joanjpx.order_service.model.entities.Order;
 import com.joanjpx.order_service.model.entities.OrderItem;
 import com.joanjpx.order_service.repositories.OrderRepository;
@@ -52,22 +54,35 @@ public class OrderService {
         }
     }
 
-    private OrderItem mapOrderItemRequestToOrderItem(OrderItemRequest orderItemRequest, Order order) {
+    public List<OrderResponse> getAllOrders() {
+        List<Order> orders = this.orderRepository.findAll();
 
-        OrderItem orderItem = new OrderItem();
-        orderItem.setOrder(order);
-        orderItem.setSku(orderItemRequest.getSku());
-        orderItem.setPrice(orderItemRequest.getPrice());
-        orderItem.setQuantity(orderItemRequest.getQuantity());
+        return orders.stream().map(Order -> mapToOrderResponse(Order)).toList();
 
-        return orderItem;
     }
 
 
-    public List<Order> getAllOrders() {
+    private OrderResponse mapToOrderResponse(Order order) {
         
-        List<Order> orders = this.orderRepository.findAll();
+        return new OrderResponse(
+            order.getId(), 
+            order.getOrderNumber(), 
+            order.getOrderItems().stream().map(this::mapToOrderItemRequest).toList()
+        );
+    }
 
-        return orders;
+    private OrderItemResponse mapToOrderItemRequest(OrderItem orderItem) {
+        return new OrderItemResponse(orderItem.getId(), orderItem.getSku(), orderItem.getPrice(), orderItem.getQuantity());
+    }
+
+    private OrderItem mapOrderItemRequestToOrderItem(OrderItemRequest orderItemRequest, Order order) {
+
+        return OrderItem.builder()
+                .id(orderItemRequest.getId())
+                .sku(orderItemRequest.getSku())
+                .price(orderItemRequest.getPrice())
+                .quantity(orderItemRequest.getQuantity())
+                .order(order)
+                .build();
     }
 }
