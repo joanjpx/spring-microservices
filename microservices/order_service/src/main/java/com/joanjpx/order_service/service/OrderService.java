@@ -1,5 +1,6 @@
 package com.joanjpx.order_service.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -49,8 +50,6 @@ public class OrderService {
 
             throw new IllegalArgumentException("Some of the products are out of stock");
         }
-
-
     }
 
     private OrderItem mapOrderItemRequestToOrderItem(OrderItemRequest orderItemRequest, Order order) {
@@ -60,6 +59,15 @@ public class OrderService {
         orderItem.setSku(orderItemRequest.getSku());
         orderItem.setPrice(orderItemRequest.getPrice());
         orderItem.setQuantity(orderItemRequest.getQuantity());
+
         return orderItem;
+    }
+
+
+    public List<Order> getAllOrders() {
+        
+        List<Order> orders = this.orderRepository.findAll();
+
+        return orders;
     }
 }
