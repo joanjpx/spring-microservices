@@ -23,7 +23,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final WebClient.Builder webClient;
 
-    public void placeOrder(OrderRequest orderRequest) {
+    public OrderResponse placeOrder(OrderRequest orderRequest) {
 
         // TO-DO check inventory
         BaseResponse result = this.webClient.build()
@@ -47,11 +47,11 @@ public class OrderService {
                         .toList()
             );
     
-            orderRepository.save(order);
-        }else{
-
-            throw new IllegalArgumentException("Some of the products are out of stock");
+            return this.mapToOrderResponse(this.orderRepository.save(order));
         }
+
+        throw new IllegalArgumentException("Some of the products are out of stock");
+        
     }
 
     public List<OrderResponse> getAllOrders() {

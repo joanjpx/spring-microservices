@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.joanjpx.order_service.model.dtos.OrderRequest;
 import com.joanjpx.order_service.model.dtos.OrderResponse;
-import com.joanjpx.order_service.model.entities.Order;
 import com.joanjpx.order_service.service.OrderService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,16 +25,17 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
-    public String placeOrder(@RequestBody OrderRequest orderRequest) {
+    public OrderResponse placeOrder(@RequestBody OrderRequest orderRequest) {
         
-        this.orderService.placeOrder(orderRequest);
+        return this.orderService.placeOrder(orderRequest);
 
-        return "Order placed successfully";
+        
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<OrderResponse> getOrders() {
+
         return this.orderService.getAllOrders();
     }
 }
