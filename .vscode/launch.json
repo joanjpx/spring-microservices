@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ApiGatewayApplication",
+            "request": "launch",
+            "mainClass": "com.joanjpx.api_gateway.ApiGatewayApplication",
+            "projectName": "api_gateway"
+        },
+        {
+            "type": "java",
             "name": "Spring Boot-InventoryServiceApplication<inventory_service>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
