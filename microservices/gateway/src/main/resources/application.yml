@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: httpbin
+          uri: http://httpbin.org/anything
+          predicates:
+            - Path=/anything/**
+        - id: mockbin
+          uri: https://mockbin.org
+          predicates:
+            - Path=/get

@@ -8,14 +8,18 @@
         <outputRelativeToContentRoot value="true" />
         <module name="inventory_service" />
         <module name="order_service" />
-        <module name="api_gateway" />
         <module name="product_service" />
+        <module name="gateway" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="api_gateway" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api_gateway" options="-parameters" />
+      <module name="gateway" options="-parameters" />
       <module name="inventory_service" options="-parameters" />
       <module name="microservices" options="" />
       <module name="order_service" options="-parameters" />
