@@ -2,11 +2,15 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: httpbin
-          uri: http://httpbin.org/anything
+        - id: inventory-service
+          uri: http://localhost:8081/api/inventory
           predicates:
-            - Path=/anything/**
-        - id: mockbin
-          uri: https://mockbin.org
+            - Path=/api/inventory/**
+        - id: order-service
+          uri: http://localhost:8082/api/order
           predicates:
-            - Path=/get
+            - Path=/api/order/**
+        - id: product-service
+          uri: http://localhost:8083/api/product
+          predicates:
+            - Path=/api/product/**
