@@ -22,6 +22,7 @@
 	</dependencies>
 	<modules>
 		<module>gateway</module>
+		<module>discovery_server</module>
 		<module>inventory_service</module>
 		<module>order_service</module>
 		<module>product_service</module>
