@@ -35,6 +35,8 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     public List<ProductResponse> getAllProducts() {
 
+        System.out.println("Probando load balancer Eureka");
+
         return this.productService.getAllProducts();
     }
 }
