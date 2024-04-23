@@ -8,17 +8,51 @@ spring:
           uri: lb://inventory-service
           predicates:
             - Path=/api/inventory/**
+
         - id: order-service
           uri: lb://order-service
           predicates:
             - Path=/api/order/**
+
         - id: product-service
           uri: lb://product-service
           predicates:
             - Path=/api/product/**
+
+        - id: discovery-service
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+
+        - id: discovery-service-static
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/**
+
+      default-filters:
+        - SaveSession
+        - TokenRelay
+
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:6033/realms/spring
+        registration:
+          keycloak:
+            provider: keycloak
+            scope: openid
+            client-id: spring-application
+            client-secret: qsbMSZlN0PW9Kfo9dZ4K5mmrUERyPmPz
+            authorization-grant-type: authorization_code
+            redirect-uri: http://{baseUrl}:8080/login/oauth2/code/keycloak
+
 eureka:
   client:
     service-url:
-      default-zone: http://localhost:8761/eureka
+      default-zone: http://eureka:password@localhost:8761/eureka
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
