@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: inventory-service
+          uri: http://inventory-service:8080
+          predicates:
+            - Path=/api/inventory/**
+        - id: order-service
+          uri: http://order-service:8080
+          predicates:
+            - Path=/api/order/**
+        - id: product-service
+          uri: http://product-service:8080
+          predicates:
+            - Path=/api/product/**
+eureka:
+  client:
+    service-url:
+      default-zone: http://discovery-service:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
