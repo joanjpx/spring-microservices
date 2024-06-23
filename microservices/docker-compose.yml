@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   ### Posgres database for Inventory
   db-inventory:
@@ -10,10 +11,11 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
     ports:
-      - 5432:5432
+      - "5432:5432"     # Expose port to host
     expose:
-      - 5432
-    command: -p 5432
+      - "5432"          # Expose port to other services
+    networks:
+      - app-network
 
   ### MySQL database for Orders
   db-orders:
@@ -26,9 +28,11 @@ services:
       MYSQL_PASSWORD: 12345678
       MYSQL_ROOT_PASSWORD: 12345678
     ports:
-      - 3306:3306
+      - "3306:3306"     # Expose port to host
     expose:
-      - 3306
+      - "3306"          # Expose port to other services
+    networks:
+      - app-network
 
   ### Posgres database for Products
   db-products:
@@ -40,7 +44,90 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
     ports:
-      - 5431:5431
+      - "5431:5431"     # Expose port to host
     expose:
-      - 5431
-    command: -p 5431
+      - "5431"          # Expose port to other services
+    networks:
+      - app-network
+
+  ### Spring Boot applications services
+
+  discovery-service:
+    image: openjdk:17-alpine
+    ports:
+      - "8761:8761"     # Expose port to host
+    expose:
+      - "8761"          # Expose port to other services
+    volumes:
+      - ./discovery_server/target/discovery_server-0.0.1-SNAPSHOT.jar:/app/discovery_service.jar
+    command: ["java", "-jar", "/app/discovery_service.jar"]
+    networks:
+      - app-network
+
+  gateway-service:
+    image: openjdk:17-alpine
+    ports:
+      - "8080:8080"     # Expose port to host
+    expose:
+      - "8080"          # Expose port to other services
+    volumes:
+      - ./gateway/target/gateway-0.0.1-SNAPSHOT.jar:/app/gateway_service.jar
+    environment:
+      - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+    command: ["java", "-jar", "/app/gateway_service.jar"]
+    networks:
+      - app-network
+    depends_on:
+      - discovery-service
+
+  product-service:
+    image: openjdk:17-alpine
+    ports:
+      - "8083:8083"     # Expose port to host
+    expose:
+      - "8083"          # Expose port to other services
+    volumes:
+      - ./product_service/target/product_service-0.0.1-SNAPSHOT.jar:/app/product_service.jar
+    environment:
+      - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+    command: ["java", "-jar", "/app/product_service.jar"]
+    networks:
+      - app-network
+    depends_on:
+      - discovery-service
+
+  order-service:
+    image: openjdk:17-alpine
+    ports:
+      - "8082:8082"     # Expose port to host
+    expose:
+      - "8082"          # Expose port to other services
+    volumes:
+      - ./order_service/target/order_service-0.0.1-SNAPSHOT.jar:/app/order_service.jar
+    environment:
+      - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+    command: ["java", "-jar", "/app/order_service.jar"]
+    networks:
+      - app-network
+    depends_on:
+      - discovery-service
+
+  inventory-service:
+    image: openjdk:17-alpine
+    ports:
+      - "8081:8081"     # Expose port to host
+    expose:
+      - "8081"          # Expose port to other services
+    volumes:
+      - ./inventory_service/target/inventory_service-0.0.1-SNAPSHOT.jar:/app/inventory_service.jar
+    environment:
+      - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+    command: ["java", "-jar", "/app/inventory_service.jar"]
+    networks:
+      - app-network
+    depends_on:
+      - discovery-service
+
+networks:
+  app-network:
+    driver: bridge
