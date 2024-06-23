@@ -80,8 +80,9 @@ services:
     volumes:
       - ./gateway/target/gateway-0.0.1-SNAPSHOT.jar:/app/gateway_service.jar
     environment:
-      DISCOVERY_SERVER_URL: http://discovery-service:8761/eureka
-      SPRING_PROFILES_ACTIVE: docker  # Added profile here
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
+      - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker  # Added profile here
     command: ["java", "-jar", "/app/gateway_service.jar"]
     networks:
       - app-network
@@ -101,8 +102,9 @@ services:
     volumes:
       - ./product_service/target/product_service-0.0.1-SNAPSHOT.jar:/app/product_service.jar
     environment:
-      DISCOVERY_SERVER_URL: http://discovery-service:8761/eureka
-      SPRING_PROFILES_ACTIVE: docker  # Added profile here
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
+      - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker  # Added profile here
     command: ["java", "-jar", "/app/product_service.jar"]
     networks:
       - app-network
@@ -119,8 +121,9 @@ services:
     volumes:
       - ./order_service/target/order_service-0.0.1-SNAPSHOT.jar:/app/order_service.jar
     environment:
-      DISCOVERY_SERVER_URL: http://discovery-service:8761/eureka
-      SPRING_PROFILES_ACTIVE: docker  # Added profile here
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
+      - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker  # Added profile here
     command: ["java", "-jar", "/app/order_service.jar"]
     networks:
       - app-network
@@ -137,8 +140,9 @@ services:
     volumes:
       - ./inventory_service/target/inventory_service-0.0.1-SNAPSHOT.jar:/app/inventory_service.jar
     environment:
-      DISCOVERY_SERVER_URL: http://discovery-service:8761/eureka
-      SPRING_PROFILES_ACTIVE: docker  # Added profile here
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
+      - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker  # Added profile here
     command: ["java", "-jar", "/app/inventory_service.jar"]
     networks:
       - app-network
@@ -153,8 +157,9 @@ services:
     networks:
       - app-network
     environment:
-      DISCOVERY_SERVER_URL: http://discovery-service:8761/eureka
-      SPRING_PROFILES_ACTIVE: docker  # Added profile here
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
+      - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker  # Added profile here
 
 
 networks:
