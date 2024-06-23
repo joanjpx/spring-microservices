@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  ### Posgres database for Inventory
+  ### Postgres database for Inventory
   db-inventory:
     container_name: db-inventory
     image: postgres:15.2
@@ -10,6 +10,7 @@ services:
       POSTGRES_DB: service_inventory
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
+      SPRING_PROFILES_ACTIVE: docker  # Added profile here
     ports:
       - "5432:5432"     # Expose port to host
     expose:
@@ -27,6 +28,7 @@ services:
       MYSQL_USER: spring
       MYSQL_PASSWORD: 12345678
       MYSQL_ROOT_PASSWORD: 12345678
+      SPRING_PROFILES_ACTIVE: docker  # Added profile here
     ports:
       - "3306:3306"     # Expose port to host
     expose:
@@ -34,7 +36,7 @@ services:
     networks:
       - app-network
 
-  ### Posgres database for Products
+  ### Postgres database for Products
   db-products:
     container_name: db-products
     image: postgres:15.2
@@ -43,10 +45,11 @@ services:
       POSTGRES_DB: service_product
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
+      SPRING_PROFILES_ACTIVE: docker  # Added profile here
     ports:
-      - "5431:5431"     # Expose port to host
+      - "5431:5432"     # Expose port to host
     expose:
-      - "5431"          # Expose port to other services
+      - "5432"          # Expose port to other services
     networks:
       - app-network
 
@@ -54,6 +57,7 @@ services:
 
   discovery-service:
     image: openjdk:17-alpine
+    container_name: discovery-service
     ports:
       - "8761:8761"     # Expose port to host
     expose:
@@ -61,11 +65,14 @@ services:
     volumes:
       - ./discovery_server/target/discovery_server-0.0.1-SNAPSHOT.jar:/app/discovery_service.jar
     command: ["java", "-jar", "/app/discovery_service.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker  # Added profile here
     networks:
       - app-network
 
   gateway-service:
     image: openjdk:17-alpine
+    container_name: gateway-service
     ports:
       - "8080:8080"     # Expose port to host
     expose:
@@ -74,6 +81,7 @@ services:
       - ./gateway/target/gateway-0.0.1-SNAPSHOT.jar:/app/gateway_service.jar
     environment:
       - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker  # Added profile here
     command: ["java", "-jar", "/app/gateway_service.jar"]
     networks:
       - app-network
@@ -82,6 +90,7 @@ services:
 
   product-service:
     image: openjdk:17-alpine
+    container_name: product-service
     ports:
       - "8083:8083"     # Expose port to host
     expose:
@@ -90,6 +99,7 @@ services:
       - ./product_service/target/product_service-0.0.1-SNAPSHOT.jar:/app/product_service.jar
     environment:
       - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker  # Added profile here
     command: ["java", "-jar", "/app/product_service.jar"]
     networks:
       - app-network
@@ -98,6 +108,7 @@ services:
 
   order-service:
     image: openjdk:17-alpine
+    container_name: order-service
     ports:
       - "8082:8082"     # Expose port to host
     expose:
@@ -106,6 +117,7 @@ services:
       - ./order_service/target/order_service-0.0.1-SNAPSHOT.jar:/app/order_service.jar
     environment:
       - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker  # Added profile here
     command: ["java", "-jar", "/app/order_service.jar"]
     networks:
       - app-network
@@ -114,6 +126,7 @@ services:
 
   inventory-service:
     image: openjdk:17-alpine
+    container_name: inventory-service
     ports:
       - "8081:8081"     # Expose port to host
     expose:
@@ -122,11 +135,22 @@ services:
       - ./inventory_service/target/inventory_service-0.0.1-SNAPSHOT.jar:/app/inventory_service.jar
     environment:
       - DISCOVERY_SERVER_URL=http://discovery-service:8761/eureka
+      - SPRING_PROFILES_ACTIVE=docker  # Added profile here
     command: ["java", "-jar", "/app/inventory_service.jar"]
     networks:
       - app-network
     depends_on:
       - discovery-service
+
+  ### Alpine Linux service for testing connectivity
+  alpine-test-container:
+    image: alpine:latest
+    container_name: alpine-test-container
+    command: sh -c "apk add --no-cache postgresql-client && sleep 3600"
+    networks:
+      - app-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker  # Added profile here
 
 networks:
   app-network:
