@@ -110,11 +110,8 @@ services:
 
   order-service:
     image: openjdk:17-alpine
-    container_name: order-service
-    ports:
-      - "8082:8082"     # Expose port to host
-    expose:
-      - "8082"          # Expose port to other services
+    deploy:
+      replicas: 2
     volumes:
       - ./order_service/target/order_service-0.0.1-SNAPSHOT.jar:/app/order_service.jar
     environment:
