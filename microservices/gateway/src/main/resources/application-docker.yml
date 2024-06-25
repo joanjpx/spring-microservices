@@ -5,15 +5,15 @@ spring:
     gateway:
       routes:
         - id: inventory-service
-          uri: http://inventory-service:8081
+          uri: lb://inventory-service
           predicates:
             - Path=/api/inventory/**
         - id: order-service
-          uri: http://order-service:8082
+          uri: lb://order-service
           predicates:
             - Path=/api/order/**
         - id: product-service
-          uri: http://product-service:8083
+          uri: lb://product-service
           predicates:
             - Path=/api/product/**
 eureka:

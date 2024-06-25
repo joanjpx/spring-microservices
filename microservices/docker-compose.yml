@@ -94,11 +94,8 @@ services:
 
   product-service:
     image: openjdk:17-alpine
-    container_name: product-service
-    ports:
-      - "8083:8083"     # Expose port to host
-    expose:
-      - "8083"          # Expose port to other services
+    deploy:
+      replicas: 3
     volumes:
       - ./product_service/target/product_service-0.0.1-SNAPSHOT.jar:/app/product_service.jar
     environment:
