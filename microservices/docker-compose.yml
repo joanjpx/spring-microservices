@@ -56,7 +56,7 @@ services:
   ### Spring Boot applications services
 
   discovery-service:
-    image: openjdk:17-alpine
+    image: eclipse-temurin:17-jre-alpine
     container_name: discovery-service
     ports:
       - "8761:8761"     # Expose port to host
@@ -71,7 +71,7 @@ services:
       - app-network
 
   gateway-service:
-    image: openjdk:17-alpine
+    image: eclipse-temurin:17-jre-alpine
     container_name: gateway-service
     ports:
       - "8080:8080"     # Expose port to host
@@ -93,7 +93,7 @@ services:
       - product-service
 
   product-service:
-    image: openjdk:17-alpine
+    image: eclipse-temurin:17-jre-alpine
     deploy:
       replicas: 3
     volumes:
@@ -109,7 +109,7 @@ services:
       - discovery-service
 
   order-service:
-    image: openjdk:17-alpine
+    image: eclipse-temurin:17-jre-alpine
     deploy:
       replicas: 2
     volumes:
@@ -125,7 +125,7 @@ services:
       - discovery-service
 
   inventory-service:
-    image: openjdk:17-alpine
+    image: eclipse-temurin:17-jre-alpine
     container_name: inventory-service
     ports:
       - "8081:8081"     # Expose port to host
